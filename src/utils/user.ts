@@ -9,7 +9,11 @@ interface UserData {
 
 const USER_KEY = "user";
 
+const isBrowser = (): boolean => typeof window !== "undefined";
+
 export const saveUser = (data: UserData): void => {
+    if (!isBrowser()) return;
+
     try {
         localStorage.setItem(USER_KEY, JSON.stringify(data));
     } catch (error) {
@@ -18,6 +22,8 @@ export const saveUser = (data: UserData): void => {
 };
 
 export const getUser = (): UserData | null => {
+    if (!isBrowser()) return null;
+
     try {
         const storedData = localStorage.getItem(USER_KEY);
         if (!storedData) return null;
@@ -43,6 +49,8 @@ export const getUser = (): UserData | null => {
 };
 
 export const clearUser = (): void => {
+    if (!isBrowser()) return;
+
     try {
         localStorage.removeItem(USER_KEY);
     } catch (error) {

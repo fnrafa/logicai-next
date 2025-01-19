@@ -26,7 +26,7 @@ const Banner: React.FC = () => {
                 <div className="flex gap-4 h-12">
                     <Button label="Generate Now" onClick={() => router.push("/feature")} icon={<FaMagic/>}
                             iconPosition="left" color="primary"/>
-                    <Button label="Discovery" onClick={() => router.push("/discovery")} icon={<FaRegCompass/>}
+                    <Button label="Discovery" onClick={() => router.push("/feature")} icon={<FaRegCompass/>}
                             iconPosition="left" color="secondary"/>
                 </div>
 

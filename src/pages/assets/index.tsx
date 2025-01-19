@@ -1,8 +1,23 @@
 import React from "react";
 import Sidebar from "@/components/layout/Sidebar";
 import AssetCard from "@/components/assets/AssetCard";
+import ProtectedPage from "@/components/ProtectedPage";
+import {getUser} from "@/utils/user";
 
 const MyAssets: React.FC = () => {
+    const user = getUser();
+
+    if (!user) {
+        return (
+            <div className="flex bg-background min-h-screen">
+                <Sidebar/>
+                <main className="flex-1 flex items-center justify-center p-6 lg:ml-64">
+                    <ProtectedPage/>
+                </main>
+            </div>
+        );
+    }
+
     const assetData = [
         {
             title: "3D Models",
