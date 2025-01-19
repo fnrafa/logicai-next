@@ -2,6 +2,7 @@
 <project version="4">
   <component name="ProjectModuleManager">
     <modules>
+      <module fileurl="file://$PROJECT_DIR$/../logicai-nest/.idea/dot-nest.iml" filepath="$PROJECT_DIR$/../logicai-nest/.idea/dot-nest.iml" />
       <module fileurl="file://$PROJECT_DIR$/.idea/logicai-next.iml" filepath="$PROJECT_DIR$/.idea/logicai-next.iml" />
     </modules>
   </component>
