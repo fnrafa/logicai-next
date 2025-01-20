@@ -82,10 +82,10 @@ const Feature: React.FC = () => {
                                 Instantly generate AI content directly from Telegram. Fast, easy, and convenient.
                             </p>
 
-                            <div className="flex justify-center items-center w-full mt-8">
+                            <div className="flex justify-center items-center w-full mt-8 h-12">
                                 <Button
                                     label="Generate on Telegram"
-                                    onClick={() => window.open("https://t.me/YourAIBot", "_blank")}
+                                    onClick={() => window.open("https://t.me/logicai_telegrambot", "_blank")}
                                     icon={<FaTelegramPlane/>}
                                     iconPosition="left"
                                     color="primary"

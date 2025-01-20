@@ -8,7 +8,7 @@ interface AlertContainerProps {
 const Alert: React.FC<AlertContainerProps> = ({alerts}) => {
     return (
         <div
-            className="fixed top-5 right-5 left-5 md:left-auto md:right-2 flex flex-col gap-4 z-[9999] max-w-sm mx-auto md:mx-0">
+            className="fixed top-5 right-5 left-5 md:left-auto md:right-8 flex flex-col gap-4 z-[9999] max-w-sm mx-auto md:mx-0">
             {alerts.map((alert) => (
                 <div
                     key={alert.id}

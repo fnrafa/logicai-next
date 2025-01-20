@@ -23,13 +23,16 @@ const Banner: React.FC = () => {
                     </p>
                 </div>
 
-                <div className="flex gap-4 h-12">
-                    <Button label="Generate Now" onClick={() => router.push("/feature")} icon={<FaMagic/>}
-                            iconPosition="left" color="primary"/>
-                    <Button label="Discovery" onClick={() => router.push("/feature")} icon={<FaRegCompass/>}
-                            iconPosition="left" color="secondary"/>
+                <div className="flex h-12 justify-center gap-4 w-full items-center">
+                    <div className="flex w-36 justify-center items-center">
+                        <Button label="Discovery" onClick={() => router.push("/feature")} icon={<FaRegCompass/>}
+                                iconPosition="left" color="secondary"/>
+                    </div>
+                    <div className="flex w-36 justify-center items-center">
+                        <Button label="Generate" onClick={() => router.push("/feature")} icon={<FaMagic/>}
+                                iconPosition="left" color="primary"/>
+                    </div>
                 </div>
-
                 <PromptExample/>
             </div>
         </section>

@@ -9,11 +9,15 @@
     "lint": "next lint"
   },
   "dependencies": {
+    "@coinbase/wallet-sdk": "^4.2.4",
+    "@metamask/detect-provider": "^2.0.0",
+    "@walletconnect/web3-provider": "^1.8.0",
     "axios": "^1.7.9",
     "ethers": "^6.13.5",
     "file-saver": "^2.0.5",
     "next": "15.1.4",
     "node-cache": "^5.1.2",
+    "rainbowkit": "^0.0.1",
     "react": "^19.0.0",
     "react-dom": "^19.0.0",
     "react-icons": "^5.4.0"

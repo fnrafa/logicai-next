@@ -1,24 +1,57 @@
-import {ethers} from "ethers";
+import {BrowserProvider} from "ethers";
+import WalletConnectProvider from "@walletconnect/web3-provider";
 
 interface WalletResponse {
     success: boolean;
     address?: string;
+    walletName?: string;
     error?: string;
 }
 
+let walletConnectProviderInstance: WalletConnectProvider | null = null;
+
 export const connectWallet = async (walletName: string): Promise<WalletResponse> => {
     try {
-        let provider;
+        let provider: BrowserProvider | null = null;
+
+        const ethereumObj = (window as any).ethereum;
 
         if (walletName === "MetaMask") {
-            if (typeof window !== "undefined" && window["ethereum"]) {
-                provider = new ethers.BrowserProvider(window["ethereum"]);
-                await window["ethereum"].request({method: "eth_requestAccounts"});
+            if (ethereumObj && ethereumObj.isMetaMask) {
+                await ethereumObj.request({method: "eth_requestAccounts"});
+                provider = new BrowserProvider(ethereumObj);
             } else {
-                return {success: false, error: "MetaMask is not installed. Please install MetaMask."};
+                window.open("https://metamask.io/download/", "_blank");
+                return {
+                    success: false,
+                    error: "MetaMask not installed. Redirecting to the download page.",
+                };
             }
+        } else if (walletName === "Rainbow Wallet") {
+            if (ethereumObj && ethereumObj.isRainbow) {
+                await ethereumObj.request({method: "eth_requestAccounts"});
+                provider = new BrowserProvider(ethereumObj);
+            } else {
+                window.open("https://rainbow.me/download", "_blank");
+                return {
+                    success: false,
+                    error: "Rainbow Wallet not installed. Redirecting to the download page.",
+                };
+            }
+        } else if (walletName === "WalletConnect") {
+            walletConnectProviderInstance = new WalletConnectProvider({
+                rpc: {1: `https://mainnet.infura.io/v3/${process.env.NEXT_PUBLIC_INFURA_API_KEY}`},
+                qrcode: true,
+                bridge: "https://bridge.walletconnect.org",
+            });
+            await walletConnectProviderInstance.enable();
+            provider = new BrowserProvider(walletConnectProviderInstance as any);
         } else {
-            return {success: false, error: `${walletName} is not supported yet`};
+            return {success: false, error: `${walletName} is not supported yet.`};
+        }
+
+        if (!provider) {
+            return {success: false, error: "No provider found."};
         }
 
         const signer = await provider.getSigner();
@@ -27,27 +60,28 @@ export const connectWallet = async (walletName: string): Promise<WalletResponse>
         localStorage.setItem("walletAddress", address);
         localStorage.setItem("connectedWallet", walletName);
 
-        return {success: true, address};
-    } catch (error: object) {
-        if (error.message === "User closed modal") {
-            return {success: false, error: "You closed the wallet connection modal."};
+        return {success: true, address, walletName};
+    } catch (error: any) {
+        if (error.code === -32603) {
+            return {success: false, error: "User rejected the request."};
         }
-        return {success: false, error: error.message || "Unknown error occurred"};
+        return {
+            success: false,
+            error: error.message || "An unknown error occurred.",
+        };
     }
 };
 
 export const disconnectWallet = async (): Promise<void> => {
     try {
-        if (window["ethereum"] && window["ethereum"].request) {
-            await window["ethereum"].request({
-                method: "wallet_requestPermissions",
-                params: [{eth_accounts: {}}],
-            });
+        const connectedWallet = localStorage.getItem("connectedWallet");
+        if (connectedWallet === "WalletConnect" && walletConnectProviderInstance) {
+            await walletConnectProviderInstance.disconnect();
+            walletConnectProviderInstance = null;
         }
         localStorage.removeItem("walletAddress");
         localStorage.removeItem("connectedWallet");
-    } catch (error: object) {
-        console.error("Error disconnecting wallet:", error.message || "Unknown error occurred.");
+    } catch (error: any) {
+        console.error("Error disconnecting wallet:", error.message || "An unknown error occurred.");
     }
 };
-

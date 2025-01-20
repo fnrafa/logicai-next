@@ -45,12 +45,14 @@ const FeatureCard: React.FC<FeatureCardProps> = ({
                     </h3>
                     <p className="text-secondary-400 mb-4">{description}</p>
                 </div>
-                <Button
-                    label="Try Now"
-                    onClick={() => router.push(path)}
-                    color="primary"
-                    fullWidth
-                />
+                <div className="flex h-12 justify-center items-center">
+                    <Button
+                        label="Try Now"
+                        onClick={() => router.push(path)}
+                        color="primary"
+                        fullWidth
+                    />
+                </div>
             </div>
         </div>
     );

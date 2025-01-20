@@ -29,7 +29,7 @@ const InputField: React.FC<Props> = ({
             required={required}
             onFocus={() => setIsFocused(true)}
             onBlur={() => setIsFocused(false)}
-            className={`w-full px-5 py-3 bg-primary-700 text-white rounded-lg border-2 shadow-md transition-all duration-300 ${
+            className={`w-full px-5 py-3 bg-primary-700 text-white rounded-lg shadow-md transition-all duration-300 ${
                 isFocused
                     ? "border-accent-500 ring-2 ring-accent-500"
                     : "border-primary-300 hover:border-accent-400"

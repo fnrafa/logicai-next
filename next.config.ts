@@ -1,7 +1,9 @@
-import type { NextConfig } from "next";
+import type {NextConfig} from "next";
 
 const nextConfig: NextConfig = {
-  /* config options here */
+    images: {
+        domains: ['cdn2.suno.ai'],
+    },
 };
 
 export default nextConfig;

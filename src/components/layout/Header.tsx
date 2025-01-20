@@ -31,7 +31,7 @@ const Header: React.FC = () => {
 
                     <Button
                         label={isConnecting ? "Connecting..." : connectedWallet ? `${connectedWallet}` : "Connect Wallet"}
-                        color="primary"
+                        color={isScrolled ? "primary" : "secondary"}
                         onClick={() => setIsModalOpen(true)}
                         icon={<FaWallet size={18}/>}
                         iconPosition="left"

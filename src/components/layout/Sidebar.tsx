@@ -86,7 +86,7 @@ const Sidebar: React.FC = () => {
                         ))}
                     </div>
                 </div>
-                <div className="p-4 border-t border-primary-700">
+                <div className="p-4 border-t border-primary-700 h-20">
                     <Button
                         label={isConnecting ? "Connecting..." : connectedWallet ? `${connectedWallet}` : "Connect Wallet"}
                         color="primary"

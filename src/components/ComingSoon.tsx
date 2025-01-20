@@ -34,7 +34,6 @@ const ComingSoon: React.FC = () => {
                         color="primary"
                         icon={<FaHome size={16}/>}
                         iconPosition="left"
-                        className="px-6 py-2 text-sm md:text-base"
                     />
                 </div>
             </div>

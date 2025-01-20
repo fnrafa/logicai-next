@@ -2,10 +2,10 @@ import React, {useEffect, useState} from "react";
 import Sidebar from "@/components/layout/Sidebar";
 import {getUser} from "@/utils/user";
 import ProtectedPage from "@/components/ProtectedPage";
+import MusicResult from "@/components/MusicResult";
 import {UserData} from "@/utils/user";
-import MusicAssets from "@/components/MusicAssets";
 
-const MusicAssetsPage: React.FC = () => {
+const MusicResultPage: React.FC = () => {
     const [user, setUser] = useState<UserData | null>(null);
 
     useEffect(() => {
@@ -17,10 +17,10 @@ const MusicAssetsPage: React.FC = () => {
         <div className="flex bg-background min-h-screen">
             <Sidebar/>
             <main className="flex-1 flex items-center justify-center p-6 lg:ml-64">
-                {user ? <MusicAssets/> : <ProtectedPage/>}
+                {user ? <MusicResult/> : <ProtectedPage/>}
             </main>
         </div>
     );
 };
 
-export default MusicAssetsPage;
+export default MusicResultPage;

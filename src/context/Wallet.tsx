@@ -3,6 +3,8 @@ import {connectWallet as connect, disconnectWallet as disconnect} from "@/utils/
 import {saveUser, clearUser, getUser} from "@/utils/user";
 import {useAlert} from "@/context/Alert";
 import axios from "axios";
+import {useLoader} from "@/context/Loader";
+import {useRouter} from "next/router";
 
 interface WalletContextType {
     connectedWallet: string | null;
@@ -19,6 +21,7 @@ export const WalletProvider: React.FC<{ children: ReactNode }> = ({children}) =>
     const [walletAddress, setWalletAddress] = useState<string | null>(null);
     const [isConnecting, setIsConnecting] = useState<boolean>(false);
     const alert = useAlert();
+    const loader = useLoader();
 
     const API_BASE_URL = process.env.NEXT_PUBLIC_API_BASE_URL || "";
 
@@ -32,6 +35,7 @@ export const WalletProvider: React.FC<{ children: ReactNode }> = ({children}) =>
 
     const connectWallet = async (walletName: string) => {
         setIsConnecting(true);
+        loader(true, {type: "spin", color: "primary", size: "large"});
 
         const result = await connect(walletName);
 
@@ -60,13 +64,16 @@ export const WalletProvider: React.FC<{ children: ReactNode }> = ({children}) =>
         }
 
         setIsConnecting(false);
+        loader(false);
     };
 
     const disconnectWallet = async () => {
+        loader(true, {type: "spin", color: "primary", size: "large"});
         await disconnect();
         clearUser();
         setConnectedWallet(null);
         setWalletAddress(null);
+        loader(false);
         alert("Wallet disconnected", "info");
     };
 

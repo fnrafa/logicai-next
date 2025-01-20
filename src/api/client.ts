@@ -1,5 +1,4 @@
 import axios from 'axios';
-import {getUser} from "@/data/auths";
 
 const client = axios.create({
     baseURL: "http://localhost:3010",
@@ -7,7 +6,7 @@ const client = axios.create({
 });
 
 client.interceptors.request.use(async (config) => {
-    const token = getUser()?.token || '';
+    const token =  '';
     if (token) {
         config.headers.Authorization = `Bearer ${token}`;
     }
