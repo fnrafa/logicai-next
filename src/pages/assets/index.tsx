@@ -1,11 +1,16 @@
-import React from "react";
+import React, {useEffect, useState} from "react";
 import Sidebar from "@/components/layout/Sidebar";
 import AssetCard from "@/components/assets/AssetCard";
 import ProtectedPage from "@/components/ProtectedPage";
-import {getUser} from "@/utils/user";
+import {getUser, UserData} from "@/utils/user";
 
 const MyAssets: React.FC = () => {
-    const user = getUser();
+    const [user, setUser] = useState<UserData | null>(null);
+
+    useEffect(() => {
+        const userData = getUser();
+        setUser(userData);
+    }, []);
 
     if (!user) {
         return (

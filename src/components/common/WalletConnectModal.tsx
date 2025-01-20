@@ -7,7 +7,7 @@ import {useWallet} from "@/context/Wallet";
 import {getUser} from "@/utils/user";
 import {useAlert} from "@/context/Alert";
 import {useLoader} from "@/context/Loader";
-import LoggedInComponent from "@/components/common/LoggenIn";
+import LoggedInComponent from "@/components/common/LoggedIn";
 
 interface WalletConnectModalProps {
     isOpen: boolean;

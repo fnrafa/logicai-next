@@ -10,7 +10,7 @@ export default function Document() {
                 <link rel="icon" type="image/png" sizes="32x32" href="/favicon-32x32.png" />
                 <link rel="icon" type="image/png" sizes="16x16" href="/favicon-16x16.png" />
                 <link rel="manifest" href="/site.webmanifest" />
-                <link rel="mask-icon" href="/safari-pinned-tab.svg" color="#00C9FF" />
+                <link rel="mask-icon" href="/apple-touch-icon.png" color="#00C9FF" />
                 <meta name="theme-color" content="#0B0F19" />
 
                 <meta charSet="UTF-8" />

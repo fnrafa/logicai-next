@@ -2,7 +2,16 @@ import type {NextConfig} from "next";
 
 const nextConfig: NextConfig = {
     images: {
-        domains: ['cdn2.suno.ai'],
+        remotePatterns: [
+            {
+                protocol: "https",
+                hostname: "cdn2.suno.ai",
+            },
+            {
+                protocol: "https",
+                hostname: "assets.meshy.ai",
+            },
+        ],
     },
 };
 

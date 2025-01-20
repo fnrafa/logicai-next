@@ -17,7 +17,6 @@ const ComingSoon: React.FC = () => {
                         alt="Coming Soon Icon"
                         width={100}
                         height={100}
-                        priority
                         className="object-contain"
                     />
                 </div>

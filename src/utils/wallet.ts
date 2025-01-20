@@ -13,7 +13,7 @@ export const connectWallet = async (walletName: string): Promise<WalletResponse>
 
         const ethereumObj = (window as any).ethereum;
 
-        if (walletName === "Meta") {
+        if (walletName === "MetaMask") {
             if (ethereumObj && ethereumObj.isMetaMask) {
                 await ethereumObj.request({method: "eth_requestAccounts"});
                 provider = new BrowserProvider(ethereumObj);
@@ -24,7 +24,7 @@ export const connectWallet = async (walletName: string): Promise<WalletResponse>
                     error: "MetaMask not installed. Redirecting to the download page.",
                 };
             }
-        } else if (walletName === "Rainbow") {
+        } else if (walletName === "Rainbow Wallet") {
             if (ethereumObj && ethereumObj.isRainbow) {
                 await ethereumObj.request({method: "eth_requestAccounts"});
                 provider = new BrowserProvider(ethereumObj);
@@ -63,11 +63,6 @@ export const connectWallet = async (walletName: string): Promise<WalletResponse>
 
 export const disconnectWallet = async (): Promise<void> => {
     try {
-        const connectedWallet = localStorage.getItem("connectedWallet");
-        if (connectedWallet === "WalletConnect" && walletConnectProviderInstance) {
-            await walletConnectProviderInstance.disconnect();
-            walletConnectProviderInstance = null;
-        }
         localStorage.removeItem("walletAddress");
         localStorage.removeItem("connectedWallet");
     } catch (error: any) {

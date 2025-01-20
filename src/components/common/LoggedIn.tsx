@@ -20,10 +20,8 @@ const LoggedInComponent: React.FC<LoggedInComponentProps> = ({
                                                              }) => {
     const [username, setUsername] = useState<string | null>(user?.username || null);
     const [editMode, setEditMode] = useState(false);
-    const [loading, setLoading] = useState(false);
 
     const refreshUserData = async () => {
-        setLoading(true);
         loader(true, {type: "spin", color: "primary", size: "medium"});
 
         try {
@@ -50,7 +48,6 @@ const LoggedInComponent: React.FC<LoggedInComponentProps> = ({
         } catch (error: any) {
             alert(error.message || "Failed to refresh user data.", "error");
         } finally {
-            setLoading(false);
             loader(false);
         }
     };
@@ -60,8 +57,6 @@ const LoggedInComponent: React.FC<LoggedInComponentProps> = ({
             alert("Username must be between 4 and 20 characters.", "error");
             return;
         }
-
-        setLoading(true);
         loader(true, {type: "spin", color: "primary", size: "medium"});
 
         try {
@@ -90,7 +85,6 @@ const LoggedInComponent: React.FC<LoggedInComponentProps> = ({
         } catch (error: any) {
             alert(error.message || "Failed to update username.", "error");
         } finally {
-            setLoading(false);
             loader(false);
         }
     };
@@ -124,8 +118,6 @@ const LoggedInComponent: React.FC<LoggedInComponentProps> = ({
                             value={username || ""}
                             onChange={(value) => setUsername(value)}
                             placeholder="Enter your username"
-                            className="bg-primary-800 text-white px-4 py-2 rounded-md w-full"
-                            disabled={loading}
                             name="username"
                         />
                         <div className="flex w-full items-end justify-end gap-2">
@@ -137,8 +129,6 @@ const LoggedInComponent: React.FC<LoggedInComponentProps> = ({
                                         setEditMode(false);
                                     }}
                                     color="secondary"
-                                    disabled={loading}
-                                    className="w-full sm:w-auto"
                                 />
                             </div>
                             <div className="h-10 w-24 sm:w-28 flex justify-center items-center">
@@ -146,8 +136,6 @@ const LoggedInComponent: React.FC<LoggedInComponentProps> = ({
                                     label="Save"
                                     onClick={handleUpdateUsername}
                                     color="primary"
-                                    disabled={loading}
-                                    className="w-full sm:w-auto"
                                 />
                             </div>
                         </div>
@@ -161,7 +149,6 @@ const LoggedInComponent: React.FC<LoggedInComponentProps> = ({
                                 icon={<FaPencilAlt/>}
                                 onClick={() => setEditMode(true)}
                                 color="secondary"
-                                className="mt-2 sm:mt-0 w-full sm:w-auto"
                             />
                         </div>
                     </div>
@@ -176,7 +163,7 @@ const LoggedInComponent: React.FC<LoggedInComponentProps> = ({
                             label="Copy"
                             icon={<FaCopy/>}
                             onClick={handleCopyAddress}
-                            color="accent"
+                            color="secondary"
                         />
                     </div>
                 </div>
@@ -188,14 +175,11 @@ const LoggedInComponent: React.FC<LoggedInComponentProps> = ({
                     icon={<FaSyncAlt/>}
                     onClick={refreshUserData}
                     color="primary"
-                    className="px-6 py-2"
-                    disabled={loading}
                 />
                 <Button
                     label="Disconnect"
                     onClick={disconnectWallet}
                     color="secondary"
-                    className="px-6 py-2"
                 />
             </div>
         </div>
