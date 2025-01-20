@@ -1,5 +1,4 @@
 import {BrowserProvider} from "ethers";
-import WalletConnectProvider from "@walletconnect/web3-provider";
 
 interface WalletResponse {
     success: boolean;
@@ -8,15 +7,13 @@ interface WalletResponse {
     error?: string;
 }
 
-let walletConnectProviderInstance: WalletConnectProvider | null = null;
-
 export const connectWallet = async (walletName: string): Promise<WalletResponse> => {
     try {
         let provider: BrowserProvider | null = null;
 
         const ethereumObj = (window as any).ethereum;
 
-        if (walletName === "MetaMask") {
+        if (walletName === "Meta") {
             if (ethereumObj && ethereumObj.isMetaMask) {
                 await ethereumObj.request({method: "eth_requestAccounts"});
                 provider = new BrowserProvider(ethereumObj);
@@ -27,7 +24,7 @@ export const connectWallet = async (walletName: string): Promise<WalletResponse>
                     error: "MetaMask not installed. Redirecting to the download page.",
                 };
             }
-        } else if (walletName === "Rainbow Wallet") {
+        } else if (walletName === "Rainbow") {
             if (ethereumObj && ethereumObj.isRainbow) {
                 await ethereumObj.request({method: "eth_requestAccounts"});
                 provider = new BrowserProvider(ethereumObj);
@@ -38,14 +35,6 @@ export const connectWallet = async (walletName: string): Promise<WalletResponse>
                     error: "Rainbow Wallet not installed. Redirecting to the download page.",
                 };
             }
-        } else if (walletName === "WalletConnect") {
-            walletConnectProviderInstance = new WalletConnectProvider({
-                rpc: {1: `https://mainnet.infura.io/v3/${process.env.NEXT_PUBLIC_INFURA_API_KEY}`},
-                qrcode: true,
-                bridge: "https://bridge.walletconnect.org",
-            });
-            await walletConnectProviderInstance.enable();
-            provider = new BrowserProvider(walletConnectProviderInstance as any);
         } else {
             return {success: false, error: `${walletName} is not supported yet.`};
         }

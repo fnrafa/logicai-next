@@ -43,7 +43,6 @@ const Sidebar: React.FC = () => {
     };
 
     return (
-
         <>
             <button
                 className={`lg:hidden fixed top-4 left-4 z-50 bg-primary-700 text-white p-2 rounded-md transition-transform duration-300 ${

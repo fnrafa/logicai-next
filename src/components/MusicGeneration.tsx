@@ -48,7 +48,7 @@ const MusicGeneration: React.FC = () => {
 
             const token = getToken();
             if (!token) {
-                alert("User token not found. Please log in.", "error");
+                alert("You need login to generate a music. Please log in.", "error");
                 return;
             }
 
@@ -101,67 +101,67 @@ const MusicGeneration: React.FC = () => {
 
     return (
         <div className="flex flex-col space-y-6 p-6 bg-primary-900 text-white lg:rounded-lg max-w-7xl mx-auto w-full">
-                <h2 className="text-3xl font-bold text-center mb-4">Start New Music Generation</h2>
-                <div className="w-full bg-primary-700 p-6 rounded-lg">
-                    <h2 className="text-2xl font-bold mb-4">Generation Result</h2>
-                    {task ? (
-                        <div className="text-lg">
-                            <p>{`Task ID: ${task.taskId}`}</p>
-                            <p>{`Status: ${task.state === "pending" ? "In Progress" : task.state}`}</p>
-                        </div>
-                    ) : (
-                        <p className="text-secondary-400">No generation in progress. Start a new one below!</p>
-                    )}
-                </div>
-                <div className="flex flex-col lg:flex-row items-center gap-4 mb-4">
-                    <InputField
-                        name="gpt_description_prompt"
-                        value={form.gpt_description_prompt || ""}
-                        onChange={(value) => handleChange("gpt_description_prompt", value)}
-                        placeholder="Enter a description prompt"
+            <h2 className="text-3xl font-bold text-center mb-4">Start New Music Generation</h2>
+            <div className="w-full bg-primary-700 p-6 rounded-lg">
+                <h2 className="text-2xl font-bold mb-4">Generation Result</h2>
+                {task ? (
+                    <div className="text-lg">
+                        <p>{`Task ID: ${task.taskId}`}</p>
+                        <p>{`Status: ${task.state === "pending" ? "In Progress" : task.state}`}</p>
+                    </div>
+                ) : (
+                    <p className="text-secondary-400">No generation in progress. Start a new one below!</p>
+                )}
+            </div>
+            <div className="flex flex-col lg:flex-row items-center gap-4 mb-4">
+                <InputField
+                    name="gpt_description_prompt"
+                    value={form.gpt_description_prompt || ""}
+                    onChange={(value) => handleChange("gpt_description_prompt", value)}
+                    placeholder="Enter a description prompt"
+                />
+                <div className="h-12 w-48 flex justify-center">
+                    <Button
+                        label={isLoading ? "Generating..." : "Generate"}
+                        onClick={handleGenerateMusic}
+                        color="secondary"
+                        disabled={isLoading || task?.state === "pending"}
                     />
-                    <div className="h-12 w-48 flex justify-center">
-                        <Button
-                            label={isLoading ? "Generating..." : "Generate"}
-                            onClick={handleGenerateMusic}
-                            color="secondary"
-                            disabled={isLoading || task?.state === "pending"}
-                        />
-                    </div>
                 </div>
+            </div>
 
-                <div>
-                    <div className="h-12 w-full px-4 flex justify-center">
-                        <Button
-                            label={showAdvanced ? "Hide Advanced Options" : "Show Advanced Options"}
-                            onClick={() => setShowAdvanced(!showAdvanced)}
-                            color="secondary"
-                            fullWidth
+            <div>
+                <div className="h-12 w-full px-4 flex justify-center">
+                    <Button
+                        label={showAdvanced ? "Hide Advanced Options" : "Show Advanced Options"}
+                        onClick={() => setShowAdvanced(!showAdvanced)}
+                        color="secondary"
+                        fullWidth
+                    />
+                </div>
+                {showAdvanced && (
+                    <div className="mt-4 space-y-4">
+                        <InputField
+                            name="prompt"
+                            value={form.prompt}
+                            onChange={(value) => handleChange("prompt", value)}
+                            placeholder="Enter your lyrics prompt (optional)"
+                        />
+                        <InputField
+                            name="title"
+                            value={form.title || ""}
+                            onChange={(value) => handleChange("title", value)}
+                            placeholder="Optional title"
+                        />
+                        <InputField
+                            name="tags"
+                            value={form.tags || ""}
+                            onChange={(value) => handleChange("tags", value)}
+                            placeholder="Optional tags (comma-separated)"
                         />
                     </div>
-                    {showAdvanced && (
-                        <div className="mt-4 space-y-4">
-                            <InputField
-                                name="prompt"
-                                value={form.prompt}
-                                onChange={(value) => handleChange("prompt", value)}
-                                placeholder="Enter your lyrics prompt (optional)"
-                            />
-                            <InputField
-                                name="title"
-                                value={form.title || ""}
-                                onChange={(value) => handleChange("title", value)}
-                                placeholder="Optional title"
-                            />
-                            <InputField
-                                name="tags"
-                                value={form.tags || ""}
-                                onChange={(value) => handleChange("tags", value)}
-                                placeholder="Optional tags (comma-separated)"
-                            />
-                        </div>
-                    )}
-                </div>
+                )}
+            </div>
         </div>
     );
 };
