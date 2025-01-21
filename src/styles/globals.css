@@ -33,4 +33,24 @@ select:-webkit-autofill {
     transition: background-color 5000s ease-in-out 0s;
 }
 
+@keyframes walk {
+    0% {
+        transform: translate(0, 0) rotate(0deg);
+        opacity: 0.3;
+    }
+    50% {
+        transform: translate(-30px, 50px) rotate(180deg);
+        opacity: 0.7;
+    }
+    100% {
+        transform: translate(0, 0) rotate(360deg);
+        opacity: 0.3;
+    }
+}
+
+.animate-walk {
+    animation: walk infinite linear;
+}
+
+
 

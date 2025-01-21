@@ -1,9 +1,10 @@
 import React, {useState} from "react";
-import {FaCopy, FaGem, FaPencilAlt, FaSyncAlt} from "react-icons/fa";
+import {FaCopy, FaPencilAlt, FaSyncAlt} from "react-icons/fa";
 import Button from "./Button";
 import {saveUser, getUser, getToken} from "@/utils/user";
 import axios from "axios";
 import InputField from "@/components/input/InputField";
+import Image from "next/image";
 
 interface LoggedInComponentProps {
     user: ReturnType<typeof getUser>;
@@ -103,8 +104,14 @@ const LoggedInComponent: React.FC<LoggedInComponentProps> = ({
     return (
         <div className="space-y-6 relative px-4 sm:px-0">
             <div className="flex justify-center items-center space-x-2">
-                <FaGem className="text-accent-500 text-2xl sm:text-3xl"/>
-                <p className="text-white font-bold text-xl sm:text-2xl">Points</p>
+                <Image
+                    src="/icon.png"
+                    alt="Logic AI Logo"
+                    width={28}
+                    height={28}
+                    className="sm:w-11 sm:h-11"
+                />
+                <p className="text-white font-bold text-xl sm:text-2xl"> Logic AI Points</p>
             </div>
             <p className="text-center font-bold text-3xl sm:text-4xl text-accent-500">
                 {user?.point || 0}
@@ -169,18 +176,22 @@ const LoggedInComponent: React.FC<LoggedInComponentProps> = ({
                 </div>
             </div>
 
-            <div className="flex w-full items-center justify-between gap-4">
-                <Button
-                    label="Refresh"
-                    icon={<FaSyncAlt/>}
-                    onClick={refreshUserData}
-                    color="primary"
-                />
-                <Button
-                    label="Disconnect"
-                    onClick={disconnectWallet}
-                    color="secondary"
-                />
+            <div className="flex w-full items-center justify-end gap-4">
+                <div className="flex h-12 justify-center w-36">
+                    <Button
+                        label="Refresh"
+                        icon={<FaSyncAlt/>}
+                        onClick={refreshUserData}
+                        color="primary"
+                    />
+                </div>
+                <div className="flex h-12 justify-center w-36">
+                    <Button
+                        label="Disconnect"
+                        onClick={disconnectWallet}
+                        color="secondary"
+                    />
+                </div>
             </div>
         </div>
     );

@@ -27,7 +27,7 @@ const PromptExample: React.FC = () => {
 
     return (
         <div className="w-full lg:w-3/4 flex flex-col items-center space-y-8 relative px-4">
-            <div className="relative w-full h-64 md:h-80 lg:h-96 rounded-xl overflow-hidden shadow-2xl">
+            <div className="relative w-full h-64 md:h-80 lg:h-96 rounded-xl overflow-hidden">
                 <Image
                     src={images[activeIndex]}
                     alt={`Generated Example ${activeIndex + 1}`}

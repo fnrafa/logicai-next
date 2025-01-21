@@ -4,13 +4,12 @@ import {saveUser, clearUser, getUser} from "@/utils/user";
 import {useAlert} from "@/context/Alert";
 import axios from "axios";
 import {useLoader} from "@/context/Loader";
-import {useRouter} from "next/router";
 
 interface WalletContextType {
     connectedWallet: string | null;
     walletAddress: string | null;
     isConnecting: boolean;
-    connectWallet: (walletName: string) => Promise<void>;
+    connectWallet: (walletName: string, address?: string, password?: string) => Promise<void>;
     disconnectWallet: () => void;
 }
 
@@ -33,38 +32,49 @@ export const WalletProvider: React.FC<{ children: ReactNode }> = ({children}) =>
         }
     }, []);
 
-    const connectWallet = async (walletName: string) => {
+    const connectWallet = async (walletName: string, address?: string, password?: string) => {
         setIsConnecting(true);
         loader(true, {type: "spin", color: "primary", size: "large"});
 
-        const result = await connect(walletName);
+        try {
+            let resolvedAddress = address;
 
-        if (result.success && result.address) {
-            try {
-                const response = await axios.post(`${API_BASE_URL}/auth/login`, {address: result.address});
-
-                saveUser({
-                    id: response.data.data.id,
-                    username: response.data.data.username,
-                    address: response.data.data.address,
-                    point: response.data.data.point,
-                    token: response.data.data.token,
-                    walletType: walletName,
-                });
-
-                setConnectedWallet(walletName);
-                setWalletAddress(result.address);
-
-                alert(`Connected to ${walletName}: ${response.data.data.username}`, "success");
-            } catch (error: object) {
-                alert(error.message || "Failed to authenticate with the server.", "error");
+            if (!resolvedAddress) {
+                const result = await connect(walletName);
+                if (result.success && result.address) {
+                    resolvedAddress = result.address;
+                } else {
+                    alert(result.error || "Failed to connect wallet", "error");
+                    setIsConnecting(false);
+                    loader(false);
+                    return;
+                }
             }
-        } else {
-            alert(result.error || "Failed to connect wallet", "error");
-        }
 
-        setIsConnecting(false);
-        loader(false);
+            const response = await axios.post(`${API_BASE_URL}/auth/login`, {
+                address: resolvedAddress,
+                password,
+            });
+
+            saveUser({
+                id: response.data.data.id,
+                username: response.data.data.username,
+                address: response.data.data.address,
+                point: response.data.data.point,
+                token: response.data.data.token,
+                walletType: walletName,
+            });
+
+            setConnectedWallet(walletName);
+            setWalletAddress(resolvedAddress);
+
+            alert(`Connected to ${walletName}: ${response.data.data.username}`, "success");
+        } catch (error: any) {
+            alert(error.message || "Failed to authenticate with the server.", "error");
+        } finally {
+            setIsConnecting(false);
+            loader(false);
+        }
     };
 
     const disconnectWallet = async () => {
