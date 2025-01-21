@@ -1,6 +1,5 @@
 import React, {useEffect, useState} from "react";
 import Image from "next/image";
-import {SiOpenai} from "react-icons/si";
 
 const prompts = [
     "Futuristic 3D female character with glowing cyan elements in a cyber world.",
@@ -40,7 +39,7 @@ const PromptExample: React.FC = () => {
                 />
             </div>
             <div
-                className="absolute bottom-4 -left-2 md:bottom-8 md:-left-2 lg:-left-8 bg-primary-800 bg-opacity-90 border border-accent-500 text-accent-400 text-xs md:text-sm lg:text-base px-3 md:px-4 lg:px-5 py-1.5 md:py-2 lg:py-3 rounded-lg shadow-xl max-w-[80%] md:max-w-md"
+                className="absolute bottom-4 -left-2 md:bottom-8 md:-left-2 lg:-left-8 bg-primary-800 bg-opacity-90 border border-accent-500 text-accent-400 text-xs md:text-sm lg:text-base px-3 md:px-4 lg:px-5 py-1.5 md:py-2 lg:py-3 rounded-lg shadow-xl max-w-[80%] md:max-w-md animate-bounceSlow"
             >
                 <p className="font-bold mb-1">Prompt:</p>
                 <p className="font-mono break-words leading-tight">

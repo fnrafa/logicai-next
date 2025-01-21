@@ -2,6 +2,7 @@ import React from "react";
 import {useRouter} from "next/router";
 import Image from "next/image";
 import Button from "@/components/common/Button";
+import {motion} from "framer-motion";
 
 interface FeatureCardProps {
     title: string;
@@ -21,10 +22,14 @@ const FeatureCard: React.FC<FeatureCardProps> = ({
     const router = useRouter();
 
     return (
-        <div
+        <motion.div
             className={`group relative bg-primary-800 rounded-xl overflow-hidden shadow-lg hover:shadow-2xl transition-transform ${
                 layout === "horizontal" ? "flex flex-col md:flex-row" : ""
             }`}
+            initial={{opacity: 0, x: 0}}
+            viewport={{once: false}}
+            whileInView={{opacity: 1, x: 0}}
+            transition={{duration: 0.8}}
         >
             <div className="relative w-full md:w-1/3 h-52 md:h-auto">
                 <Image
@@ -54,7 +59,7 @@ const FeatureCard: React.FC<FeatureCardProps> = ({
                     />
                 </div>
             </div>
-        </div>
+        </motion.div>
     );
 };
 
