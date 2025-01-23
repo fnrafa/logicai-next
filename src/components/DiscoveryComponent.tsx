@@ -5,6 +5,7 @@ import Image from "next/image";
 
 interface MeshData {
     id: string;
+    taskId: string;
     prompt: string;
     modelType: string;
     previewImage: string | null;
@@ -13,6 +14,7 @@ interface MeshData {
 
 interface MusicData {
     id: string;
+    taskId: string;
     title: string;
     tags: string | null;
     imageUrl: string | null;
@@ -93,7 +95,7 @@ const DiscoveryComponent: React.FC = () => {
         <div
             key={mesh.id}
             className="cursor-pointer bg-primary-800 rounded-lg shadow-lg overflow-hidden transition-transform transform hover:scale-105"
-            onClick={() => (window.location.href = `/3d/${mesh.id}`)}
+            onClick={() => (window.location.href = `/3d/${mesh.taskId}`)}
         >
             {mesh.previewImage ? (
                 <div className="relative w-full h-40">
@@ -122,7 +124,7 @@ const DiscoveryComponent: React.FC = () => {
         <div
             key={music.id}
             className="cursor-pointer bg-primary-800 rounded-lg shadow-lg overflow-hidden transition-transform transform hover:scale-105"
-            onClick={() => (window.location.href = `/music/${music.id}`)}
+            onClick={() => (window.location.href = `/music/${music.taskId}`)}
         >
             {music.imageUrl ? (
                 <div className="relative w-full h-40">
