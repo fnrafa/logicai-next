@@ -7,7 +7,7 @@ export interface UserData {
     walletType: string;
 }
 
-const USER_KEY = "user";
+const USER_KEY = "LogicAI_USER";
 
 const isBrowser = (): boolean => typeof window !== "undefined";
 
@@ -61,9 +61,4 @@ export const clearUser = (): void => {
 export const getToken = (): string | null => {
     const user = getUser();
     return user?.token || null;
-};
-
-export const getWalletType = (): string | null => {
-    const user = getUser();
-    return user?.walletType || null;
 };

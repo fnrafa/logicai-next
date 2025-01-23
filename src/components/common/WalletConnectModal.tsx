@@ -15,13 +15,10 @@ interface WalletConnectModalProps {
 }
 
 const wallets = [
-    {name: "Rainbow Wallet", icon: "/assets/wallets/rainbow.png", description: "A colorful Ethereum wallet."},
-    {name: "MetaMask", icon: "/assets/wallets/metamask.png", description: "A popular Ethereum wallet."},
-    {name: "Coinbase Wallet", icon: "/assets/wallets/coinbase.png", description: "Coinbase's crypto wallet."},
     {
-        name: "WalletConnect",
-        icon: "/assets/wallets/walletconnect.png",
-        description: "Connect any wallet using WalletConnect.",
+        "name": "MetaMask",
+        "icon": "/assets/wallets/metamask.png",
+        "description": "MetaMask is a popular Ethereum wallet that lets users manage cryptocurrency, access dApps, and interact with the blockchain. It supports Ethereum-based tokens and offers features like transaction signing and account switching via a browser extension or mobile app."
     },
     {name: "LogicAI", icon: "/icon.png", description: "Use your address and password to connect securely."},
 ];
@@ -102,6 +99,9 @@ const WalletConnectModal: React.FC<WalletConnectModalProps> = ({isOpen, onClose}
                                         <h3 className="text-xl font-bold text-accent-400 mb-2">
                                             Connect with LogicAI
                                         </h3>
+                                        <p className="text-white">
+                                            {wallets.find((wallet) => wallet.name === selectedWallet)?.description}
+                                        </p>
                                         <input
                                             type="text"
                                             name="address"
@@ -123,7 +123,7 @@ const WalletConnectModal: React.FC<WalletConnectModalProps> = ({isOpen, onClose}
                                 ) : selectedWallet ? (
                                     <div>
                                         <h3 className="text-xl font-bold text-accent-400 mb-2">{selectedWallet}</h3>
-                                        <p className="text-white">
+                                        <p className="text-white mb-4">
                                             {wallets.find((wallet) => wallet.name === selectedWallet)?.description}
                                         </p>
                                         <Button

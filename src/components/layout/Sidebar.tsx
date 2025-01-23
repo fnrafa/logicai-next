@@ -10,7 +10,7 @@ import {
     FaMagic,
     FaWallet,
     FaGlobeAsia,
-    FaGamepad,
+    FaGamepad, FaRegCompass,
 } from "react-icons/fa";
 import Button from "@/components/common/Button";
 import Image from "next/image";
@@ -29,6 +29,7 @@ const Sidebar: React.FC = () => {
     const navItems = [
         {label: "Home", path: "/", icon: <FaHome/>},
         {label: "Feature", path: "/feature", icon: <FaMagic/>},
+        {label: "Discovery", path: "/discovery", icon: <FaRegCompass/>},
         {label: "My Assets", path: "/assets", icon: <FaFolderOpen/>},
         {label: "Text to 3D", path: "/3d", icon: <Md3dRotation/>},
         {label: "Text to Music", path: "/music", icon: <FaMusic/>},

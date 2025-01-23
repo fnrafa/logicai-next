@@ -1,4 +1,4 @@
-import React from "react";
+import React, {useEffect, useState} from "react";
 import {motion} from "framer-motion";
 import Button from "@/components/common/Button";
 import PromptExample from "@/components/PromptExample";
@@ -7,21 +7,32 @@ import {useRouter} from "next/router";
 
 const Banner: React.FC = () => {
     const router = useRouter();
+    const [shapes, setShapes] = useState<Array<{ top: string; left: string; duration: string; delay: string }>>([]);
+
+    useEffect(() => {
+        const generatedShapes = Array.from({length: 15}).map(() => ({
+            top: `${Math.random() * 100}%`,
+            left: `${Math.random() * 100}%`,
+            duration: `${5 + Math.random() * 5}s`,
+            delay: `${Math.random() * 3}s`,
+        }));
+        setShapes(generatedShapes);
+    }, []);
 
     return (
-        <section
-            className="relative py-20 lg:py-32 flex flex-col items-center justify-start overflow-hidden bg-gradient-to-br from-primary-900 via-primary-800 to-primary-700"
+        <section id="about"
+                 className="relative py-20 lg:py-32 flex flex-col items-center justify-start overflow-hidden bg-gradient-to-br from-primary-900 via-primary-800 to-primary-700"
         >
             <div className="absolute inset-0 overflow-hidden z-10">
-                {Array.from({length: 15}).map((_, index) => (
+                {shapes.map((shape, index) => (
                     <div
                         key={index}
                         className="absolute w-16 h-16 md:w-20 md:h-20 rounded-lg opacity-30 animate-walk bg-accent-600"
                         style={{
-                            top: `${Math.random() * 100}%`,
-                            left: `${Math.random() * 100}%`,
-                            animationDuration: `${5 + Math.random() * 5}s`,
-                            animationDelay: `${Math.random() * 3}s`,
+                            top: shape.top,
+                            left: shape.left,
+                            animationDuration: shape.duration,
+                            animationDelay: shape.delay,
                         }}
                     />
                 ))}
@@ -48,7 +59,7 @@ const Banner: React.FC = () => {
                     <div className="flex w-36 justify-center items-center">
                         <Button
                             label="Discovery"
-                            onClick={() => router.push("/feature")}
+                            onClick={() => router.push("/discovery")}
                             icon={<FaRegCompass/>}
                             iconPosition="left"
                             color="secondary"

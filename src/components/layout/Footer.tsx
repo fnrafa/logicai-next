@@ -1,5 +1,6 @@
 import React from "react";
-import {FaTelegram, FaTwitter} from "react-icons/fa";
+import {FaMediumM, FaTelegram} from "react-icons/fa";
+import {FaXTwitter} from "react-icons/fa6";
 
 const Footer: React.FC = () => {
     return (
@@ -18,13 +19,17 @@ const Footer: React.FC = () => {
                     </div>
 
                     <div className="flex space-x-6">
-                        <a href="#" target="_blank" rel="noopener noreferrer"
+                        <a href="https://t.me/LogicAIETH" target="_blank" rel="noopener noreferrer"
                            className="text-secondary-400 hover:text-accent-500 transition">
                             <FaTelegram size={24}/>
                         </a>
-                        <a href="#" target="_blank" rel="noopener noreferrer"
+                        <a href="https://x.com/logicaiofficial" target="_blank" rel="noopener noreferrer"
                            className="text-secondary-400 hover:text-accent-500 transition">
-                            <FaTwitter size={24}/>
+                            <FaXTwitter size={24}/>
+                        </a>
+                        <a href="https://medium.com/@logicagentai" target="_blank" rel="noopener noreferrer"
+                           className="text-secondary-400 hover:text-accent-500 transition">
+                            <FaMediumM size={24}/>
                         </a>
                     </div>
                 </div>
