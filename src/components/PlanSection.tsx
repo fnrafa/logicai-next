@@ -5,7 +5,7 @@ import Button from "@/components/common/Button";
 
 const plans = [
     {
-        title: "30 Day Free Plan",
+        title: "30 Days Free Plan",
         price: "$0",
         features: [
             {text: "Unlimited Text to 3D Generation", included: true},

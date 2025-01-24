@@ -23,7 +23,7 @@ const Header: React.FC = () => {
         {label: "About", path: "#about"},
         {label: "Product", path: "#product"},
         {label: "Studio", path: "#studio"},
-        {label: "Web3", path: "#"},
+        {label: "Web3", path: "https://techworks-organization.gitbook.io/logic-ai/"},
         {label: "Documentation", path: "https://techworks-organization.gitbook.io/logic-ai/"},
     ];
 
@@ -67,7 +67,7 @@ const Header: React.FC = () => {
 
                     <ul className="hidden lg:flex space-x-6">
                         {navItems.map((item) => (
-                            <li key={item.path}>
+                            <li key={item.label}>
                                 <button
                                     onClick={() => handleNavigation(item.path)}
                                     className="text-white hover:text-accent-500 transition-colors"
@@ -121,7 +121,7 @@ const Header: React.FC = () => {
                     </li>
 
                     {navItems.map((item) => (
-                        <li key={item.path}>
+                        <li key={item.label}>
                             <button
                                 onClick={() => handleNavigation(item.path)}
                                 className="w-full text-left text-white hover:text-accent-600 transition-colors text-lg"
