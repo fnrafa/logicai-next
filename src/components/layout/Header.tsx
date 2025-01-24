@@ -23,8 +23,8 @@ const Header: React.FC = () => {
         {label: "About", path: "#about"},
         {label: "Product", path: "#product"},
         {label: "Studio", path: "#studio"},
-        {label: "Web3", path: "https://techworks-organization.gitbook.io/logic-ai/"},
-        {label: "Documentation", path: "https://techworks-organization.gitbook.io/logic-ai/"},
+        {label: "Web3", path: "https://docs.logicai.technology/"},
+        {label: "Documentation", path: "https://docs.logicai.technology/"},
     ];
 
     const handleNavigation = (path: string) => {
