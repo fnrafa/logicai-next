@@ -46,7 +46,7 @@ const Feature: React.FC = () => {
     return (
         <div className="flex bg-background min-h-screen">
             <Sidebar/>
-            <main className="flex-1 p-6 lg:ml-64">
+            <main className="flex-1 lg:ml-64 p-6 md:p-0">
                 <div className="relative py-10 px-2 md:px-10 rounded-2xl overflow-hidden">
                     <div className="relative z-10">
                         <h1 className="text-5xl font-extrabold text-transparent bg-clip-text bg-gradient-to-r from-accent-600 to-secondary-900 text-center drop-shadow-lg mb-10 tracking-wide">
@@ -72,7 +72,6 @@ const Feature: React.FC = () => {
                                 />
                             ))}
                         </div>
-
                         <TelegramBanner/>
                     </div>
                 </div>

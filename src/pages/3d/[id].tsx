@@ -16,7 +16,7 @@ const MusicResultPage: React.FC = () => {
     return (
         <div className="flex bg-background min-h-screen">
             <Sidebar/>
-            <main className="flex-1 flex items-center justify-center p-6 lg:ml-64">
+            <main className="flex-1 flex items-center justify-center lg:ml-64">
                 {user ? <MeshResult/> : <ProtectedPage/>}
             </main>
         </div>

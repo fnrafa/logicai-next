@@ -7,8 +7,6 @@ interface LoadingContextType {
 }
 
 interface LoaderOptions {
-    type?: "spin" | "pulse" | "bounce";
-    color?: "primary" | "secondary";
     size?: "small" | "medium" | "large";
 }
 
@@ -40,7 +38,7 @@ const LoadingProvider: React.FC<{ children: React.ReactNode }> = ({children}) =>
         const handleStart = () => {
             if (!manualLoading) {
                 setIsLoading(true);
-                setLoaderOptions({type: "spin", color: "primary", size: "large"});
+                setLoaderOptions({size: "large"});
             }
         };
         const handleComplete = () => {
@@ -65,8 +63,6 @@ const LoadingProvider: React.FC<{ children: React.ReactNode }> = ({children}) =>
             {isLoading && (
                 <div className="fixed inset-0 bg-black bg-opacity-80 flex items-center justify-center z-50">
                     <Loader
-                        type={loaderOptions.type || "spin"}
-                        color={loaderOptions.color || "primary"}
                         size={loaderOptions.size || "large"}
                     />
                 </div>

@@ -1,25 +1,28 @@
 import React, {useState} from "react";
-import {useAlert} from "@/context/Alert";
-import {useLoader} from "@/context/Loader";
+import axios from "axios";
 import InputField from "@/components/input/InputField";
 import Button from "@/components/common/Button";
-import {FaPlay, FaDownload} from "react-icons/fa";
-import axios from "axios";
+import {useAlert} from "@/context/Alert";
+import {useLoader} from "@/context/Loader";
+import {FaDownload, FaEye, FaFileArchive, FaRegPaperPlane, FaCode} from "react-icons/fa";
+import JSZip from "jszip";
+import {saveAs} from "file-saver";
 import {getToken} from "@/utils/user";
 
 interface ProgramGenerationForm {
     prompt: string;
-    language: "javascript" | "python" | "c";
+}
+
+interface GeneratedFile {
+    fileName: string;
+    content: string;
 }
 
 const ProgramGeneration: React.FC = () => {
-    const [form, setForm] = useState<ProgramGenerationForm>({
-        prompt: "",
-        language: "javascript",
-    });
-    const [code, setCode] = useState("// Write your JavaScript code here\nconsole.log('Hello, World!');");
-    const [output, setOutput] = useState("");
+    const [form, setForm] = useState<ProgramGenerationForm>({prompt: ""});
+    const [generatedFile, setGeneratedFile] = useState<GeneratedFile | null>(null);
     const [isLoading, setIsLoading] = useState(false);
+    const [isCodeModalOpen, setIsCodeModalOpen] = useState(false);
     const alert = useAlert();
     const loader = useLoader();
 
@@ -29,8 +32,10 @@ const ProgramGeneration: React.FC = () => {
         setForm((prev) => ({...prev, [field]: value}));
     };
 
+    const generateRandomString = () => Math.random().toString(36).substring(2, 10);
+
     const handleGenerate = async () => {
-        if (!form.prompt) {
+        if (!form.prompt.trim()) {
             alert("Please enter a prompt to generate code.", "error");
             return;
         }
@@ -47,16 +52,15 @@ const ProgramGeneration: React.FC = () => {
 
             const response = await axios.post(
                 `${API_BASE_URL}/code/generate`,
-                {
-                    prompt: code.toString(),
-                    instruction: form.prompt,
-                },
-                {
-                    headers: {Authorization: `Bearer ${token}`},
-                }
+                {prompt: form.prompt, instruction: "Preferred HTML with style and script, no commentary"},
+                {headers: {Authorization: `Bearer ${token}`}}
             );
 
-            setCode(response.data.data || "// No code generated.");
+            const resultContent = response.data.data;
+            setGeneratedFile({
+                fileName: "index.html",
+                content: resultContent,
+            });
         } catch (error: any) {
             alert(error.response?.data?.message || "Failed to generate code.", "error");
         } finally {
@@ -65,111 +69,112 @@ const ProgramGeneration: React.FC = () => {
         }
     };
 
-    const handleRun = async () => {
-        try {
-            setOutput("Running...");
-            loader(true);
-
-            if (form.language === "javascript") {
-                const logs: string[] = [];
-                const customConsole = {
-                    log: (...args: any[]) => {
-                        logs.push(args.map((arg) => String(arg)).join(" "));
-                    },
-                };
-
-                const wrappedCode = `
-          (function(console){
-            ${code}
-          })(customConsole);
-        `;
-                const execute = new Function("customConsole", wrappedCode);
-                execute(customConsole);
-                setOutput(logs.join("\n") || "No output returned.");
-            } else {
-                const token = getToken();
-                if (!token) {
-                    alert("User token not found. Please log in.", "error");
-                    return;
-                }   
-                setOutput("Only javascript are supported");
-            }
-        } catch (error: any) {
-            setOutput(error.message || "An error occurred while executing the code.");
-        } finally {
-            loader(false);
+    const handleDownloadFile = () => {
+        if (generatedFile) {
+            const blob = new Blob([generatedFile.content], {type: "text/html"});
+            const link = document.createElement("a");
+            link.href = URL.createObjectURL(blob);
+            link.download = generatedFile.fileName;
+            link.click();
         }
     };
 
-    const handleDownload = () => {
-        const fileExtension = form.language === "python" ? "py" : form.language === "c" ? "c" : "js";
-        const blob = new Blob([code], {type: "text/plain"});
-        const link = document.createElement("a");
-        link.href = URL.createObjectURL(blob);
-        link.download = `code.${fileExtension}`;
-        link.click();
+    const handleDownloadAsZip = async () => {
+        if (generatedFile) {
+            const zip = new JSZip();
+            zip.file(generatedFile.fileName, generatedFile.content);
+
+            const content = await zip.generateAsync({type: "blob"});
+            const zipName = `${generateRandomString()}.zip`;
+            saveAs(content, zipName);
+        }
+    };
+
+    const handlePreviewWeb = () => {
+        if (generatedFile) {
+            const blob = new Blob([generatedFile.content], {type: "text/html"});
+            const previewUrl = URL.createObjectURL(blob);
+            window.open(previewUrl, "_blank");
+        }
     };
 
     return (
         <div className="flex flex-col gap-6 p-6 bg-primary-900 text-white lg:rounded-lg max-w-7xl mx-auto w-full">
-            <h2 className="text-3xl font-bold text-center mb-4">Start Program Code Generation</h2>
+            <h2 className="text-3xl font-bold text-center mb-4">Start Code Generation</h2>
 
-            <div className="flex flex-col lg:flex-row gap-4">
-                <div className="flex-1 bg-primary-700 p-6 rounded-lg relative">
-                    <h2 className="text-2xl font-bold mb-4">Code Editor</h2>
-                    <textarea
-                        value={code}
-                        onChange={(e) => setCode(e.target.value)}
-                        className="w-full h-[300px] lg:h-[400px] bg-primary-800 p-4 text-secondary-200 rounded font-mono"
-                        spellCheck={false}
-                    />
-                    <div className="absolute top-4 right-4 flex items-center gap-4">
-                        <Button label="" onClick={handleRun} color="secondary" icon={<FaPlay/>}/>
-                        <Button label="" onClick={handleDownload} color="secondary" icon={<FaDownload/>}/>
-                    </div>
-                </div>
-
-                {/* Controls and Output */}
-                <div className="flex flex-col flex-1 space-y-6">
-                    {/* Language Selector */}
-                    <div className="flex gap-4">
-                        {["javascript", "python", "c"].map((lang) => (
+            {generatedFile && (
+                <div>
+                    <h2 className="text-2xl font-bold mb-4">Generated Files</h2>
+                    <div className="bg-primary-800 p-4 rounded-lg mb-4 flex items-center justify-between">
+                        <span className="text-secondary-200">{generatedFile.fileName}</span>
+                        <div className="flex gap-2">
                             <Button
-                                key={lang}
-                                label={lang.toUpperCase()}
-                                onClick={() => handleChange("language", lang as "javascript" | "python" | "c")}
-                                color={form.language === lang ? "primary" : "secondary"}
+                                label=""
+                                icon={<FaCode/>}
+                                onClick={() => setIsCodeModalOpen(true)}
+                                color="primary"
+                                title="Preview Code"
                             />
-                        ))}
-                    </div>
-
-                    {/* Prompt Input */}
-                    <div className="flex flex-col lg:flex-row items-center gap-4">
-                        <InputField
-                            name="prompt"
-                            value={form.prompt}
-                            onChange={(value) => handleChange("prompt", value)}
-                            placeholder="Enter your prompt to generate code"
-                        />
-                        <Button
-                            label={isLoading ? "Generating..." : "Generate"}
-                            onClick={handleGenerate}
-                            color="secondary"
-                            disabled={isLoading}
-                        />
-                    </div>
-
-                    {/* Execution Result */}
-                    <div className="bg-primary-700 p-6 rounded-lg">
-                        <h2 className="text-2xl font-bold mb-4">Execution Result</h2>
-                        <div
-                            className="bg-primary-800 p-4 rounded text-secondary-200 min-h-[150px] lg:min-h-[300px] font-mono whitespace-pre-wrap"
-                        >
-                            {output || "No output yet. Run your code to see the result here."}
+                            <Button
+                                label=""
+                                icon={<FaEye/>}
+                                onClick={handlePreviewWeb}
+                                color="secondary"
+                                title="Preview Web"
+                            />
+                            <Button
+                                label=""
+                                icon={<FaDownload/>}
+                                onClick={handleDownloadFile}
+                                color="secondary"
+                                title="Download File"
+                            />
                         </div>
                     </div>
+                    <Button
+                        label="Download All as ZIP"
+                        icon={<FaFileArchive/>}
+                        onClick={handleDownloadAsZip}
+                        color="secondary"
+                        fullWidth
+                    />
+                </div>
+            )}
+
+            <div className="flex flex-row items-center gap-4 mb-4">
+                <InputField
+                    name="prompt"
+                    value={form.prompt}
+                    onChange={(value) => handleChange("prompt", value)}
+                    placeholder="Enter your prompt to generate code"
+                />
+                <div className="h-12 flex justify-center items-center">
+                    <Button
+                        label=""
+                        onClick={handleGenerate}
+                        color="secondary"
+                        icon={<FaRegPaperPlane/>}
+                        disabled={isLoading || form.prompt.trim() === ""}
+                    />
                 </div>
             </div>
+
+            {isCodeModalOpen && generatedFile && (
+                <div className="fixed inset-0 bg-black bg-opacity-75 flex justify-center items-center p-4 z-50">
+                    <div className="bg-primary-800 rounded-lg p-6 max-w-3xl w-full relative">
+                        <h2 className="text-xl font-bold mb-4">Code Preview</h2>
+                        <pre className="bg-primary-900 p-4 rounded-lg text-secondary-200 overflow-auto max-h-96">
+                            {generatedFile.content}
+                        </pre>
+                        <button
+                            onClick={() => setIsCodeModalOpen(false)}
+                            className="absolute top-4 right-4 text-secondary-200 hover:text-white"
+                        >
+                            ✖
+                        </button>
+                    </div>
+                </div>
+            )}
         </div>
     );
 };

@@ -43,19 +43,19 @@ const FeatureCard: React.FC<FeatureCardProps> = ({
                 />
             </div>
 
-            <div className="p-6 flex flex-col justify-between flex-1">
+            <div className="p-6 flex flex-col justify-between flex-1 w-full">
                 <div>
                     <h3 className="text-2xl font-bold text-secondary-700 mb-2">
                         {title}
                     </h3>
                     <p className="text-secondary-400 mb-4">{description}</p>
                 </div>
-                <div className="flex h-12 justify-center items-center">
+                <div className="w-full">
                     <Button
                         label="Try Now"
                         onClick={() => router.push(path)}
                         color="primary"
-                        fullWidth
+                        fullWidth={true}
                     />
                 </div>
             </div>

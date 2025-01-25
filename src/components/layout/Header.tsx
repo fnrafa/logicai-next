@@ -23,7 +23,7 @@ const Header: React.FC = () => {
         {label: "About", path: "#about"},
         {label: "Product", path: "#product"},
         {label: "Studio", path: "#studio"},
-        {label: "Web3", path: "https://docs.logicai.technology/"},
+        {label: "Web3", path: "https://docs.logicai.technology/logic-ai-token/tokenomic"},
         {label: "Documentation", path: "https://docs.logicai.technology/"},
     ];
 
@@ -70,7 +70,7 @@ const Header: React.FC = () => {
                             <li key={item.label}>
                                 <button
                                     onClick={() => handleNavigation(item.path)}
-                                    className="text-white hover:text-accent-500 transition-colors"
+                                    className="text-white font-bold hover:text-accent-500 transition-colors"
                                 >
                                     {item.label}
                                 </button>

@@ -58,7 +58,7 @@ const Sidebar: React.FC = () => {
                     isOpen ? "translate-x-0" : "-translate-x-full"
                 } lg:translate-x-0 transition-transform duration-300 z-40 flex flex-col`}
             >
-                <div className="flex flex-col flex-1">
+                <div className="flex flex-col flex-1 overflow-auto">
                     <button onClick={() => handleNavigation("/")} className="relative w-32 h-12 mx-auto mt-6">
                         <Image
                             src="/horizontal-white.png"
@@ -86,7 +86,7 @@ const Sidebar: React.FC = () => {
                         ))}
                     </div>
                 </div>
-                <div className="p-4 border-t border-primary-700 h-20">
+                <div className="p-4 border-primary-700">
                     <Button
                         label={isConnecting ? "Connecting..." : connectedWallet ? `${connectedWallet}` : "Connect Wallet"}
                         color="primary"

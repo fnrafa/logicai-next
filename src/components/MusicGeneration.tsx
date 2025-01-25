@@ -5,6 +5,7 @@ import Button from "@/components/common/Button";
 import {useAlert} from "@/context/Alert";
 import {useLoader} from "@/context/Loader";
 import {useRouter} from "next/router";
+import {FaChevronDown, FaChevronUp, FaRegPaperPlane} from "react-icons/fa";
 import {getToken} from "@/utils/user";
 
 interface MusicGenerationForm {
@@ -113,55 +114,50 @@ const MusicGeneration: React.FC = () => {
                     <p className="text-secondary-400">No generation in progress. Start a new one below!</p>
                 )}
             </div>
-            <div className="flex flex-col lg:flex-row items-center gap-4 mb-4">
+            <div className="flex flex-row items-center justify-between gap-4 mb-4">
+                <Button
+                    icon={showAdvanced ? <FaChevronUp/> : <FaChevronDown/>}
+                    onClick={() => setShowAdvanced(!showAdvanced)}
+                    color="secondary"
+                    fullWidth={false}
+                />
                 <InputField
                     name="gpt_description_prompt"
                     value={form.gpt_description_prompt || ""}
                     onChange={(value) => handleChange("gpt_description_prompt", value)}
                     placeholder="Enter a description prompt"
                 />
-                <div className="h-12 w-48 flex justify-center">
-                    <Button
-                        label={isLoading ? "Generating..." : "Generate"}
-                        onClick={handleGenerateMusic}
-                        color="secondary"
-                        disabled={isLoading || task?.state === "pending"}
-                    />
-                </div>
+                <Button
+                    label={""}
+                    onClick={handleGenerateMusic}
+                    icon={<FaRegPaperPlane/>}
+                    color="secondary"
+                    disabled={isLoading || task?.state === "pending" || form.prompt.trim() === ""}
+                />
             </div>
 
-            <div>
-                <div className="h-12 w-full px-4 flex justify-center">
-                    <Button
-                        label={showAdvanced ? "Hide Advanced Options" : "Show Advanced Options"}
-                        onClick={() => setShowAdvanced(!showAdvanced)}
-                        color="secondary"
-                        fullWidth
+            {showAdvanced && (
+                <div className="mt-4 space-y-4 rounded-lg">
+                    <InputField
+                        name="title"
+                        value={form.title || ""}
+                        onChange={(value) => handleChange("title", value)}
+                        placeholder="Optional title"
+                    />
+                    <InputField
+                        name="prompt"
+                        value={form.prompt}
+                        onChange={(value) => handleChange("prompt", value)}
+                        placeholder="Optional lyrics"
+                    />
+                    <InputField
+                        name="tags"
+                        value={form.tags || ""}
+                        onChange={(value) => handleChange("tags", value)}
+                        placeholder="Optional tags (comma-separated)"
                     />
                 </div>
-                {showAdvanced && (
-                    <div className="mt-4 space-y-4">
-                        <InputField
-                            name="prompt"
-                            value={form.prompt}
-                            onChange={(value) => handleChange("prompt", value)}
-                            placeholder="Enter your lyrics prompt (optional)"
-                        />
-                        <InputField
-                            name="title"
-                            value={form.title || ""}
-                            onChange={(value) => handleChange("title", value)}
-                            placeholder="Optional title"
-                        />
-                        <InputField
-                            name="tags"
-                            value={form.tags || ""}
-                            onChange={(value) => handleChange("tags", value)}
-                            placeholder="Optional tags (comma-separated)"
-                        />
-                    </div>
-                )}
-            </div>
+            )}
         </div>
     );
 };

@@ -62,3 +62,8 @@ export const getToken = (): string | null => {
     const user = getUser();
     return user?.token || null;
 };
+
+export const getUsername = (): string | null => {
+    const user = getUser();
+    return user?.username || null;
+};

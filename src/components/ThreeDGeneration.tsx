@@ -6,11 +6,12 @@ import {useAlert} from "@/context/Alert";
 import {useLoader} from "@/context/Loader";
 import {useRouter} from "next/router";
 import {getToken} from "@/utils/user";
+import {FaRegPaperPlane} from "react-icons/fa";
 
 interface MeshGenerationForm {
     prompt: string;
-    art_style: "realistic" | "cartoon" | "sculpture";
-    mode: "preview" | "final";
+    art_style: "realistic";
+    mode: "preview";
 }
 
 interface TaskResponse {
@@ -28,7 +29,6 @@ const ThreeDGeneration: React.FC = () => {
     });
     const [task, setTask] = useState<TaskResponse | null>(null);
     const [isLoading, setIsLoading] = useState(false);
-    const [showAdvanced, setShowAdvanced] = useState(false);
     const alert = useAlert();
     const loader = useLoader();
     const router = useRouter();
@@ -77,6 +77,9 @@ const ThreeDGeneration: React.FC = () => {
 
             if (result.state === "SUCCEEDED") {
                 await router.push(`/3d/${result.taskId}`);
+            } else if (result.state === "FAILED") {
+                alert("3D generation failed. Please try again.", "error");
+                setTask(null);
             }
         } catch (error: any) {
             alert(error.response?.data?.message || "Failed to check result.", "error");
@@ -106,66 +109,22 @@ const ThreeDGeneration: React.FC = () => {
                     <p className="text-secondary-400">No generation in progress. Start a new one below!</p>
                 )}
             </div>
-            <div className="flex flex-col lg:flex-row items-center gap-4 mb-4">
+            <div className="flex flex-row items-center gap-4 mb-4">
                 <InputField
                     name="prompt"
                     value={form.prompt}
                     onChange={(value) => handleChange("prompt", value)}
                     placeholder="Enter your 3D generation prompt"
                 />
-                <div className="h-12 w-48 flex justify-center">
+                <div className="h-12 flex justify-center items-center">
                     <Button
-                        label={isLoading ? "Generating..." : "Generate"}
+                        label=""
                         onClick={handleGenerateMesh}
                         color="secondary"
-                        disabled={isLoading || task?.state === "pending"}
+                        icon={<FaRegPaperPlane/>}
+                        disabled={isLoading || task?.state === "pending" || form.prompt.trim() === ""}
                     />
                 </div>
-            </div>
-            <div>
-                <div className="h-12 w-full px-4 flex justify-center">
-                    <Button
-                        label={showAdvanced ? "Hide Advanced Options" : "Show Advanced Options"}
-                        onClick={() => setShowAdvanced(!showAdvanced)}
-                        color="secondary"
-                        fullWidth
-                    />
-                </div>
-                {showAdvanced && (
-                    <div className="mt-4 space-y-4">
-                        <h3 className="text-lg font-semibold">Select Mode</h3>
-                        <div className="flex gap-4">
-                            <Button
-                                label="Preview"
-                                onClick={() => handleChange("mode", "preview")}
-                                color={form.mode === "preview" ? "primary" : "secondary"}
-                            />
-                            <Button
-                                label="Final"
-                                onClick={() => handleChange("mode", "final")}
-                                color={form.mode === "final" ? "primary" : "secondary"}
-                            />
-                        </div>
-                        <h3 className="text-lg font-semibold">Select Art Style</h3>
-                        <div className="flex gap-4">
-                            <Button
-                                label="Realistic"
-                                onClick={() => handleChange("art_style", "realistic")}
-                                color={form.art_style === "realistic" ? "primary" : "secondary"}
-                            />
-                            <Button
-                                label="Cartoon"
-                                onClick={() => handleChange("art_style", "cartoon")}
-                                color={form.art_style === "cartoon" ? "primary" : "secondary"}
-                            />
-                            <Button
-                                label="Sculpture"
-                                onClick={() => handleChange("art_style", "sculpture")}
-                                color={form.art_style === "sculpture" ? "primary" : "secondary"}
-                            />
-                        </div>
-                    </div>
-                )}
             </div>
         </div>
     );

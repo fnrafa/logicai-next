@@ -1,11 +1,17 @@
-import React, {useEffect, useState} from "react";
+import React, {useEffect, useState, useRef, useCallback} from "react";
 import {useRouter} from "next/router";
 import axios from "axios";
 import Image from "next/image";
-import Button from "@/components/common/Button";
+import {
+    FaPlay,
+    FaPause,
+    FaVolumeUp,
+    FaVolumeMute,
+    FaMusic,
+    FaDownload,
+} from "react-icons/fa";
+import Loader from "@/components/common/Loader";
 import {useAlert} from "@/context/Alert";
-import {useLoader} from "@/context/Loader";
-import {getToken} from "@/utils/user";
 
 interface MusicData {
     id: string;
@@ -13,123 +19,216 @@ interface MusicData {
     tags: string;
     lyrics: string;
     audioUrl: string;
-    imageUrl: string;
-    state: string;
-    createdAt: string;
-    updatedAt: string;
+    imageUrl?: string;
 }
 
 const MusicResult: React.FC = () => {
     const router = useRouter();
     const {id} = router.query;
     const [music, setMusic] = useState<MusicData | null>(null);
+    const [fetchError, setFetchError] = useState(false);
+    const [isPlaying, setIsPlaying] = useState(false);
+    const [volume, setVolume] = useState(1);
+    const [isMuted, setIsMuted] = useState(false);
+    const [currentTime, setCurrentTime] = useState(0);
+    const [duration, setDuration] = useState(0);
+    const [showLyrics, setShowLyrics] = useState(false);
+    const audioRef = useRef<HTMLAudioElement | null>(null);
     const alert = useAlert();
-    const loader = useLoader();
+    const hasFetched = useRef(false);
     const API_BASE_URL = process.env.NEXT_PUBLIC_API_BASE_URL || "";
 
-    const fetchMusicResult = async (musicId: string) => {
+    const fetchMusicResult = useCallback(async () => {
+        if (hasFetched.current) return;
+        hasFetched.current = true;
         try {
-            loader(true);
-
-            const token = getToken();
-            if (!token) {
-                alert("User token not found. Please log in.", "error");
-                return;
-            }
-
-            const response = await axios.get(`${API_BASE_URL}/music/result/${musicId}`, {
-                headers: {Authorization: `Bearer ${token}`},
-            });
-
+            const response = await axios.get(`${API_BASE_URL}/music/result/${id}`);
             setMusic(response.data.data);
-        } catch (error: any) {
-            alert(error.response?.data?.message || "Failed to fetch music result.", "error");
-        } finally {
-            loader(false);
+        } catch {
+            setFetchError(true);
+            alert("Failed to fetch music data.");
+        }
+    }, [id, API_BASE_URL, alert]);
+
+    useEffect(() => {
+        if (router.isReady && typeof id === "string" && !music && !fetchError) {
+            fetchMusicResult().then();
+        }
+    }, [id, router.isReady, music, fetchError, fetchMusicResult]);
+
+    useEffect(() => {
+        const audio = audioRef.current;
+        if (audio) {
+            const updateCurrentTime = () => setCurrentTime(audio.currentTime);
+            const updateDuration = () => {
+                if (!isNaN(audio.duration)) {
+                    setDuration(audio.duration);
+                }
+            };
+
+            audio.addEventListener("timeupdate", updateCurrentTime);
+            audio.addEventListener("loadedmetadata", updateDuration);
+
+            return () => {
+                audio.removeEventListener("timeupdate", updateCurrentTime);
+                audio.removeEventListener("loadedmetadata", updateDuration);
+            };
+        }
+    }, []);
+
+    const togglePlay = () => {
+        const audio = audioRef.current;
+        if (audio) {
+            if (isPlaying) {
+                audio.pause();
+            } else {
+                audio.play().then();
+            }
+            setIsPlaying(!isPlaying);
         }
     };
 
-    useEffect(() => {
-        if (router.isReady && id && typeof id === "string") {
-            fetchMusicResult(id).then();
+    const toggleMute = () => {
+        setIsMuted(!isMuted);
+        if (audioRef.current) {
+            if ("muted" in audioRef.current) {
+                audioRef.current.muted = !isMuted;
+            }
         }
-    }, [router.isReady, id]);
+    };
+
+    const handleVolumeChange = (value: number) => {
+        setVolume(value);
+        if (audioRef.current) {
+            if ("volume" in audioRef.current) {
+                audioRef.current.volume = value;
+            }
+        }
+    };
+
+    const handleSeek = (value: number) => {
+        if (audioRef.current) {
+            if ("currentTime" in audioRef.current) {
+                audioRef.current.currentTime = value;
+            }
+        }
+        setCurrentTime(value);
+    };
+
+    const formatTime = (time: number) => {
+        const minutes = Math.floor(time / 60);
+        const seconds = Math.floor(time % 60);
+        return `${minutes}:${seconds < 10 ? "0" : ""}${seconds}`;
+    };
+
+    if (fetchError) {
+        return (
+            <div
+                className="min-h-screen w-full flex flex-col items-center justify-center bg-gradient-to-b from-gray-900 to-black text-white text-center p-4"
+            >
+                <Image src="/icon.png" alt="Data not found" width={150} height={150}/>
+                <p className="mt-4 text-lg font-semibold">Data not found</p>
+            </div>
+        );
+    }
 
     if (!music) {
-        return <p className="text-white text-center">Loading music details...</p>;
+        return (
+            <div
+                className="min-h-screen w-full flex items-center justify-center bg-gradient-to-b from-primary-900 to-black text-white">
+                <Loader size="large"/>
+            </div>
+        );
     }
 
     return (
         <div
-            className="relative flex flex-col items-center space-y-6 p-6 text-white min-h-screen w-full bg-cover bg-center rounded-lg overflow-hidden shadow-lg justify-center"
-            style={{
-                backgroundImage: `url('/assets/image/logicai-2.png')`,
-            }}
-        >
-            <div className="absolute inset-0 bg-black bg-opacity-70 pointer-events-none"></div>
-            <div className="relative z-10 w-full flex flex-col justify-center items-center">
-                <div className="w-full max-w-4xl bg-primary-800 rounded-lg shadow-lg p-6 space-y-6">
-                    <div className="flex flex-col md:flex-row md:space-x-6 space-y-6 md:space-y-0">
-                        <div className="relative w-full md:w-1/2 h-64">
-                            {music.imageUrl ? (
-                                <Image
-                                    src={music.imageUrl}
-                                    alt={music.title || "Music Cover"}
-                                    fill
-                                    sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw"
-                                    style={{objectFit: "cover"}}
-                                    className="rounded-lg shadow-md hover:scale-105 transition-transform duration-500"
-                                />
-                            ) : (
-                                <div
-                                    className="flex items-center justify-center h-full bg-primary-700 rounded-lg text-secondary-400">
-                                    No cover image available.
-                                </div>
-                            )}
-                        </div>
-
-                        {/* Music Info */}
-                        <div className="flex flex-col justify-between flex-1 space-y-4">
-                            <div>
-                                <h2 className="text-3xl font-semibold">{music.title || "Untitled Music"}</h2>
-                                <p className="text-secondary-400">{music.tags || "No tags available."}</p>
-                            </div>
-
-                            {music.audioUrl ? (
-                                <audio controls src={music.audioUrl} className="w-full rounded-lg">
-                                    Your browser does not support the audio element.
-                                </audio>
-                            ) : (
-                                <p className="text-secondary-400">Audio not available yet.</p>
-                            )}
-                        </div>
+            className="min-h-screen w-full flex flex-col items-center bg-gradient-to-br from-primary-900 via-black to-primary-800 text-white p-6">
+            {music && (
+                <audio
+                    ref={audioRef}
+                    src={music.audioUrl}
+                    onLoadedMetadata={() => {
+                        if (audioRef.current) {
+                            if ("duration" in audioRef.current) {
+                                setDuration(audioRef.current.duration);
+                            }
+                        }
+                    }}
+                ></audio>
+            )}
+            <div className="relative w-full max-w-4xl aspect-video bg-primary-800 rounded-lg overflow-hidden">
+                {showLyrics ? (
+                    <div className="p-4 h-full overflow-y-auto text-sm">
+                        <h2 className="text-lg font-bold mb-4">Lyrics</h2>
+                        <p className="whitespace-pre-wrap">{music.lyrics || "Lyrics are not available."}</p>
+                    </div>
+                ) : music.imageUrl ? (
+                    <Image
+                        src={music.imageUrl}
+                        alt={music.title || "Music Cover"}
+                        layout="fill"
+                        objectFit="cover"
+                        className="rounded-lg"
+                    />
+                ) : (
+                    <div className="flex items-center justify-center h-full text-primary-400">
+                        No image available
+                    </div>
+                )}
+            </div>
+            <div className="w-full max-w-4xl mt-6 flex flex-col items-center gap-4">
+                <div className="w-full flex items-center gap-2">
+                    <span className="text-sm text-primary-400">{formatTime(currentTime)}</span>
+                    <input
+                        type="range"
+                        min="0"
+                        max={duration}
+                        step="0.1"
+                        value={currentTime}
+                        onChange={(e) => handleSeek(parseFloat(e.target.value))}
+                        className="flex-grow accent-blue-500"
+                    />
+                    <span className="text-sm text-primary-400">{formatTime(duration)}</span>
+                </div>
+                <div className="flex justify-between items-center w-full">
+                    <div className="flex items-center gap-4">
+                        <button
+                            onClick={togglePlay}
+                            className="p-2 bg-primary-700 rounded-full hover:bg-primary-600"
+                        >
+                            {isPlaying ? <FaPause/> : <FaPlay/>}
+                        </button>
                     </div>
 
-                    {/* Lyrics */}
-                    {music.lyrics && (
-                        <div className="bg-primary-700 p-4 rounded-lg text-sm">
-                            <h3 className="font-semibold text-lg mb-2">Lyrics</h3>
-                            <p className="whitespace-pre-wrap">{music.lyrics}</p>
-                        </div>
-                    )}
-
-                    {/* Action Buttons */}
-                    <div
-                        className="flex flex-col md:flex-row items-center justify-between space-y-4 md:space-y-0 md:space-x-4">
-                        {music.audioUrl && (
-                            <Button
-                                label="Download"
-                                onClick={() => window.open("audioUrl" in music ? music.audioUrl : "", "_blank")}
-                                color="primary"
-                                className="w-full md:w-auto"
-                            />
-                        )}
-                        <Button
-                            label="Generate Again"
-                            onClick={() => router.push("/music")}
-                            color="secondary"
-                            className="w-full md:w-auto"
+                    <div className="flex items-center gap-4">
+                        <button
+                            onClick={toggleMute}
+                            className="p-2 bg-primary-700 rounded-full hover:bg-primary-600"
+                        >
+                            {isMuted ? <FaVolumeMute/> : <FaVolumeUp/>}
+                        </button>
+                        <input
+                            type="range"
+                            min="0"
+                            max="1"
+                            step="0.01"
+                            value={volume}
+                            onChange={(e) => handleVolumeChange(parseFloat(e.target.value))}
+                            className="w-24 accent-blue-500"
                         />
+                        <button
+                            onClick={() => setShowLyrics(!showLyrics)}
+                            className="p-2 bg-primary-700 rounded-full hover:bg-primary-600"
+                        >
+                            <FaMusic/>
+                        </button>
+                        <button
+                            onClick={() => window.open("audioUrl" in music ? music.audioUrl : "", "_blank")}
+                            className="p-2 bg-primary-700 rounded-full hover:bg-primary-600"
+                        >
+                            <FaDownload/>
+                        </button>
                     </div>
                 </div>
             </div>
