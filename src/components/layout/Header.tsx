@@ -1,41 +1,28 @@
-import React, {useState, useEffect} from "react";
-import {useRouter} from "next/router";
+import React, { useState, useEffect } from "react";
+import { useRouter } from "next/router";
 import Image from "next/image";
-import {FaWallet, FaBars, FaTimes} from "react-icons/fa";
+import { FaWallet, FaBars, FaTimes } from "react-icons/fa";
 import WalletConnectModal from "@/components/common/WalletConnectModal";
 import Button from "@/components/common/Button";
-import {useWallet} from "@/context/Wallet";
+import { useWallet } from "@/context/Wallet";
+import Link from "next/link";
 
 const Header: React.FC = () => {
     const router = useRouter();
     const [isScrolled, setIsScrolled] = useState(false);
     const [isModalOpen, setIsModalOpen] = useState(false);
     const [isNavOpen, setIsNavOpen] = useState(false);
-    const {connectedWallet, isConnecting} = useWallet();
+    const { connectedWallet, isConnecting } = useWallet();
 
     useEffect(() => {
-        const handleScroll = () => setIsScrolled(window.scrollY > 50);
+        const handleScroll = () => {
+            if (!isNavOpen) {
+                setIsScrolled(window.scrollY > 50);
+            }
+        };
         window.addEventListener("scroll", handleScroll);
         return () => window.removeEventListener("scroll", handleScroll);
-    }, []);
-
-    const navItems = [
-        {label: "About", path: "#about"},
-        {label: "Product", path: "#product"},
-        {label: "Studio", path: "#studio"},
-        {label: "Web3", path: "https://docs.logicai.technology/logic-ai-token/tokenomic"},
-        {label: "Documentation", path: "https://docs.logicai.technology/"},
-    ];
-
-    const handleNavigation = (path: string) => {
-        router.push(path).then(() => setIsNavOpen(false));
-    };
-
-    const headerBg = isNavOpen
-        ? "bg-primary-900 shadow-lg"
-        : isScrolled
-            ? "bg-primary-900 shadow-lg"
-            : "bg-transparent";
+    }, [isNavOpen]);
 
     useEffect(() => {
         if (isNavOpen) {
@@ -44,6 +31,27 @@ const Header: React.FC = () => {
             document.body.style.overflow = "";
         }
     }, [isNavOpen]);
+
+    const navItems = [
+        { label: "About", path: "#about" },
+        { label: "Product", path: "#product" },
+        { label: "Studio", path: "#studio" },
+        { label: "Web3", path: "https://docs.logicai.technology/logic-ai-token/tokenomic" },
+        { label: "Documentation", path: "https://docs.logicai.technology/" },
+    ];
+
+    const handleNavigation = (path: string) => {
+        setIsNavOpen(false);
+        if (!path.startsWith("#")) {
+            router.push(path).then();
+        }
+    };
+
+    const headerBg = isNavOpen
+        ? "bg-primary-900 shadow-lg"
+        : isScrolled
+            ? "bg-primary-900 shadow-lg"
+            : "bg-transparent";
 
     return (
         <header
@@ -60,7 +68,7 @@ const Header: React.FC = () => {
                             alt="LogicAI Logo"
                             fill
                             sizes="(max-width: 768px) 128px, (max-width: 1200px) 176px, 220px"
-                            style={{objectFit: "contain"}}
+                            style={{ objectFit: "contain" }}
                             priority
                         />
                     </button>
@@ -68,22 +76,25 @@ const Header: React.FC = () => {
                     <ul className="hidden lg:flex space-x-6">
                         {navItems.map((item) => (
                             <li key={item.label}>
-                                <button
-                                    onClick={() => handleNavigation(item.path)}
-                                    className="text-white font-bold hover:text-accent-500 transition-colors"
-                                >
-                                    {item.label}
-                                </button>
+                                {item.path.startsWith("#") ? (
+                                    <Link href={item.path} className="text-white font-bold hover:text-accent-500 transition-colors" onClick={() => handleNavigation(item.path)}>
+                                        {item.label}
+                                    </Link>
+                                ) : (
+                                    <Link href={item.path} className="text-white font-bold hover:text-accent-500 transition-colors">
+                                        {item.label}
+                                    </Link>
+                                )}
                             </li>
                         ))}
                     </ul>
 
                     <div className="absolute right-4 lg:hidden flex items-center space-x-4">
                         <button onClick={() => setIsModalOpen(true)}>
-                            <FaWallet size={24}/>
+                            <FaWallet size={24} />
                         </button>
                         <button onClick={() => setIsNavOpen(!isNavOpen)}>
-                            {isNavOpen ? <FaTimes size={24}/> : <FaBars size={24}/>}
+                            {isNavOpen ? <FaTimes size={24} /> : <FaBars size={24} />}
                         </button>
                     </div>
 
@@ -98,7 +109,7 @@ const Header: React.FC = () => {
                             }
                             color={isNavOpen || isScrolled ? "primary" : "secondary"}
                             onClick={() => setIsModalOpen(true)}
-                            icon={<FaWallet size={18}/>}
+                            icon={<FaWallet size={18} />}
                             iconPosition="left"
                         />
                     </div>
@@ -116,18 +127,21 @@ const Header: React.FC = () => {
                             onClick={() => setIsNavOpen(false)}
                             className="text-white hover:text-primary-500 transition-colors"
                         >
-                            <FaTimes size={24}/>
+                            <FaTimes size={24} />
                         </button>
                     </li>
 
                     {navItems.map((item) => (
                         <li key={item.label}>
-                            <button
-                                onClick={() => handleNavigation(item.path)}
-                                className="w-full text-left text-white hover:text-accent-600 transition-colors text-lg"
-                            >
-                                {item.label}
-                            </button>
+                            {item.path.startsWith("#") ? (
+                                <Link href={item.path} className="w-full text-left text-white hover:text-accent-600 transition-colors text-lg" onClick={() => handleNavigation(item.path)}>
+                                    {item.label}
+                                </Link>
+                            ) : (
+                                <Link href={item.path} className="w-full text-left text-white hover:text-accent-600 transition-colors text-lg">
+                                    {item.label}
+                                </Link>
+                            )}
                         </li>
                     ))}
 
@@ -145,20 +159,13 @@ const Header: React.FC = () => {
                                 setIsNavOpen(false);
                                 setIsModalOpen(true);
                             }}
-                            icon={<FaWallet size={18}/>}
+                            icon={<FaWallet size={18} />}
                             iconPosition="left"
                             fullWidth
                         />
                     </li>
                 </ul>
             </div>
-
-            {isNavOpen && (
-                <div
-                    className="fixed inset-0 bg-black opacity-0 z-50 lg:hidden"
-                    onClick={() => setIsNavOpen(false)}
-                ></div>
-            )}
 
             <WalletConnectModal
                 isOpen={isModalOpen}
