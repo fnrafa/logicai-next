@@ -49,10 +49,10 @@ const ProgramGeneration: React.FC = () => {
                 alert("User token not found. Please log in.", "error");
                 return;
             }
-
+            const instruction = `${form.prompt.trim()} - Preferred HTML with style and script, no commentary`;
             const response = await axios.post(
                 `${API_BASE_URL}/code/generate`,
-                {prompt: form.prompt, instruction: "Preferred HTML with style and script, no commentary"},
+                {prompt: `<html lang="en"><head><title>LogicAI Code</title></head><body></body></html>`, instruction},
                 {headers: {Authorization: `Bearer ${token}`}}
             );
 
@@ -163,7 +163,7 @@ const ProgramGeneration: React.FC = () => {
                 <div className="fixed inset-0 bg-black bg-opacity-75 flex justify-center items-center p-4 z-50">
                     <div className="bg-primary-800 rounded-lg p-6 max-w-3xl w-full relative">
                         <h2 className="text-xl font-bold mb-4">Code Preview</h2>
-                        <pre className="bg-primary-900 p-4 rounded-lg text-secondary-200 overflow-auto max-h-96">
+                        <pre className="bg-primary-100 p-4 rounded-lg text-white overflow-auto max-h-96">
                             {generatedFile.content}
                         </pre>
                         <button
